@@ -39,7 +39,7 @@
 */
 
 $route['default_controller'] = "welcome";
-$route['upload'] = 'upload';
+$route['upload/?(\d*)'] = 'upload/submit';
 $route['404_override'] = '';
 
 
