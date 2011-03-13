@@ -2,7 +2,7 @@
 
 class CryptTool{
 
-    function encrypt($inputkey, $text){
+    static function encrypt($inputkey, $text){
 
         if(!$inputkey && !$text){
             return false; 
@@ -15,7 +15,7 @@ class CryptTool{
         }
     }
 
-    function decrypt($inputkey, $encrypted){
+    static function decrypt($inputkey, $encrypted){
         if(!$inputkey && !$encrypted){
             return false; 
         }
@@ -25,5 +25,20 @@ class CryptTool{
             $text = mcrypt_decrypt(MCRYPT_BLOWFISH, $key, $encrypted, MCRYPT_MODE_ECB);
             return $text;
         }
+    }
+
+    static function get_file_fetch_hash($filename){
+        $hash_meta = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+        $salt = '';
+        for($i = 0; $i < 10;$i++){
+            $salt .= $hash_meta[rand(0,63)];
+        }
+
+        echo $salt."\n";
+
+        $hash = sha1($filename.$salt);
+
+        return $hash;
     }
 }

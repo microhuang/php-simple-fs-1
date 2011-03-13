@@ -2,7 +2,7 @@
        
 class DirTool{
 
-    function recur_mkdir($path, $seperator = "/"){
+    static function recur_mkdir($path, $mod = 0777, $seperator = "/"){
         if($path){
             $folders = explode($seperator, $path);
             if($folders){
@@ -11,7 +11,7 @@ class DirTool{
                     $current_path .= $folder.$seperator;
                     if(!file_exists($current_path) && $current_path){
                         echo "making path {$current_path}","\n";
-                        mkdir($current_path);
+                        mkdir($current_path, $mod);
                     }
                 }
             }

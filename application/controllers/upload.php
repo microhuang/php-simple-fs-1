@@ -4,9 +4,9 @@ class Upload extends CI_Controller {
 
     function __construct()
     {
-            parent::__construct();
-    $this->load->model('File_model', '', true);
-    $this->load->model('Token_model', '', true);
+        parent::__construct();
+        $this->load->model('File_model', '', true);
+        $this->load->model('Token_model', '', true);
     }
 
     function index(){
@@ -22,56 +22,72 @@ class Upload extends CI_Controller {
     function submit(){
         /* verify the token */
         $token = $this->input->post('token');
-        $key = $this->input->post('key');
-        if($token && $key){
-            $crypt_tool_obj = new CryptTool();
-            $token = $crypt_tool_obj->decrypt($key, $token);
-            $token_query = $this->Token_model->is_valid($token);
+        $code = $this->input->post('code');
+        // $token = true;
+        // $code = true;
+        if($token && $code){
+            $token_obj = $this->Token_model->get_token($code);
 
-            if($result = $token_query->result()){
-                foreach($result as $token_obj){
+            $is_valid = false;
+            if($token_obj){
+                $key = $token_obj->key;
+                $token = base64_decode($token);
+                $token_verifying = CryptTool::decrypt($key, $token);
+                if($token_verifying == $token_obj->token){
                     $is_valid = true;
-                    $key = $token_obj->key;
+                    $dir_name = $token_obj->dir_name;
+                }
+                else{
+                    $return_values = array(
+                        "error" => true,
+                        "err_msg" => "Token doesn't match the code provided."
+                    );
+
+                    $ret = json_encode($return_values);
+                    return $ret;
                 }
             }
 
             if($is_valid){
                 /* file proccess */
+                $seperator = $this->config->item('dir_seperator');
                 /* return values */
                 $root_path = $this->config->item('file_path');
-                $dir_name = 'test';
 
                 $return_values = array();
 
-                $token = $this->input->post('access_token');
-
                 $dir_tool = new DirTool();
-
                 $files = $_FILES;
                 if($files){
                     $dir_tool_obj = new DirTool();
                     $saved_url = array();
                     foreach($files as $file){
                         /* save the file */
-                        $save_path = $this->config->item('save_path');
+                        $save_path = $root_path.$seperator.$dir_name.$seperator.date("Y").$seperator.date("m").$seperator.date("d").$seperator;
                         $seperator = $this->config->item('dir_seperator');
-                        $save_path .= date("Y").$seperator.date("m").$seperator.date("d").$seperator.$file['name'];
-                        $flag = move_uploaded_file($save_path, $file['tmp_name']);
+                        $filename = date("H:i:s")."_".$file['name'];
+                        $save_full_path = $save_path.$filename;
+                        $flag = DirTool::recur_mkdir($save_path);
+                        $flag = move_uploaded_file($file['tmp_name'], $save_full_path);
 
+                        $hash_sum = sha1_file($save_full_path);
+                        
                         /* insert file info */
                         $inputarr = array();
                         $inputarr['name'] = $file['name'];
                         $inputarr['mime_type'] = $file['type'];
                         $inputarr['size'] = $file['size'];
+                        $inputarr['file_hash'] = $hash_sum;
+                        $inputarr['fetch_hash'] = CryptTool::get_file_fetch_hash($filename);
+                        $inputarr['full_path'] = $save_full_path;
 
-                        $result = $this->File_model->insert_file($inputarr);
-                        $last_file = $this->File_model->get_last_file();
+
+                        $file_obj = $this->File_model->insert_file($inputarr);
 
                         /* set file url */
                         $saved_url[] = array(
-                            "id" => $last_file[0]->id,
-                            "url" =>  $last_file[0]->path
-                        )
+                            "hash" =>  $file_obj->fetch_hash
+                        );
                     } 
                     
                     $return_values['error'] = false;

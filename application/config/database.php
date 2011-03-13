@@ -43,8 +43,8 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'root';
-$db['default']['password'] = 'dbaroot';
-$db['default']['database'] = 'php_simple_fs';
+$db['default']['password'] = 'rootyumemi';
+$db['default']['database'] = 'php-simple-fs';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

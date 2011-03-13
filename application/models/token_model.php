@@ -3,11 +3,18 @@
 class Token_model extends CI_Model {
 
     function __construct(){
-        
+        parent::__construct();
     }
 
-    function is_valid($token){
-        $query = $this->db->query('select * from `token` where `token` = ?', array($token));
-        return $query;
+    function get_token($code){
+        $ret = false;
+        $query = $this->db->query('select * from `token` where `code` = ? ', array($code));
+        if($query){
+            $result = $query->result();
+            if($result){
+                $ret = $result[0];
+            }
+        }
+        return $ret;
     }
 }
