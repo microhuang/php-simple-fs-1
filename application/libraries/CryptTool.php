@@ -35,8 +35,6 @@ class CryptTool{
             $salt .= $hash_meta[rand(0,63)];
         }
 
-        echo $salt."\n";
-
         $hash = sha1($filename.$salt);
 
         return $hash;

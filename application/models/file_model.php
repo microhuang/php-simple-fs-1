@@ -20,16 +20,34 @@ class File_model extends CI_Model {
         return $query;
     }
 
+    public function get_file_by_id($id){
+        $query = $this->db->query('select * from `file` where `id` = ?', array($id));
+        return $query;
+    }
+
+    public function get_file_by_file_hash($hash){
+        $ret = false;
+        $query = $this->db->query('select * from `file` where `file_hash` = ?', array($hash));
+        if($query){
+            if($result = $query->result()){
+                $ret = $result[0];
+            }
+        }
+        return $ret;
+    }
+
     public function get_last_file(){
         $ret = false;
         $query = $this->db->query('select max(`id`) \'id\'  from `file` ');
         if($query){
             $temp_arr = $query->result();
             $file_id = $temp_arr[0]->id;
-            $query = $this->get_file($file_id);
+            $query = $this->get_file_by_id($file_id);
             if($query){
                 $result = $query->result();
-                $ret = $result[0];
+                if($result){
+                    $ret = $result[0];
+                }
             }
         }
         return $ret;

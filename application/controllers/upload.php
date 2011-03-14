@@ -68,10 +68,19 @@ class Upload extends CI_Controller {
                         $filename = date("H:i:s")."_".$file['name'];
                         $save_full_path = $save_path.$filename;
                         $flag = DirTool::recur_mkdir($save_path);
-                        $flag = move_uploaded_file($file['tmp_name'], $save_full_path);
 
-                        $hash_sum = sha1_file($save_full_path);
+                        // $hash_sum = sha1_file($save_full_path);
+                        $hash_sum = sha1_file($file['tmp_name']);
                         
+                        /* check if identical file exist */
+                        $check_file = $this->File_model->get_file_by_file_hash($hash_sum);
+                        if($check_file){
+                            $save_full_path = $check_file->full_path;
+                        }
+                        else{
+                            $flag = move_uploaded_file($file['tmp_name'], $save_full_path);
+                        }
+
                         /* insert file info */
                         $inputarr = array();
                         $inputarr['name'] = $file['name'];
@@ -80,7 +89,6 @@ class Upload extends CI_Controller {
                         $inputarr['file_hash'] = $hash_sum;
                         $inputarr['fetch_hash'] = CryptTool::get_file_fetch_hash($filename);
                         $inputarr['full_path'] = $save_full_path;
-
 
                         $file_obj = $this->File_model->insert_file($inputarr);
 

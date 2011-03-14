@@ -21,14 +21,15 @@ class Download extends CI_Controller {
     }
 
     function handle(){
-        if(isset($_POST['download_key'])){
-            $download_key = $_POST['download_key'];
+        parse_str($_SERVER['QUERY_STRING'], $_GET);
+        if(isset($_GET['download_key'])){
+            $download_key = $_GET['download_key'];
         }
         else{
             $download_key = '';
         }
         if($download_key){
-            $this->fetch($download);
+            $this->fetch($download_key);
         }
         else{
             $this->verify();
@@ -78,9 +79,8 @@ class Download extends CI_Controller {
     }
 
 
-    private function fetch(){
-        $fetch_hash = $_POST['fetch_hash'];
-        $download_key = $_POST['download_key'];
+    private function fetch($download_key){
+        $fetch_hash = $_GET['fetch_hash']?$_GET['fetch_hash']:'';
         
         $flag = $this->Download_key_model->is_valid($download_key);
         if($flag){

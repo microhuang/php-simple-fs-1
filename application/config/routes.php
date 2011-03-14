@@ -40,7 +40,7 @@
 
 $route['default_controller'] = "welcome";
 $route['upload/?(\d*)'] = 'upload/submit';
-$route['download/?(.+)*'] = 'download/handle/$1';
+$route['download/?(.*)'] = 'download/handle/$1';
 $route['404_override'] = '';
 
 

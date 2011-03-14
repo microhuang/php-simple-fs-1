@@ -10,7 +10,7 @@ class DirTool{
                 foreach($folders as $folder){
                     $current_path .= $folder.$seperator;
                     if(!file_exists($current_path) && $current_path){
-                        echo "making path {$current_path}","\n";
+                        // echo "making path {$current_path}","\n";
                         mkdir($current_path, $mod);
                     }
                 }
