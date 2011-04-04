@@ -37,7 +37,29 @@ class Download extends CI_Controller {
     }
 
     function verify(){
-        /* verify the token */
+        $use_auth = $this->config->item('use_auth');
+        if($use_auth){
+            if($this->check_token()){
+                /* verify the token */
+                $is_valid = true;
+            }
+        }
+        else{
+            $is_valid = true;
+        }
+        $allow_source = $this->config->item('allow_source');
+
+        if($is_valid){
+            $download_key = $this->Download_key_model->generate_key();
+            $return_values['error'] = false;
+            $return_values['download_key'] = $download_key;
+
+            $ret = json_encode($return_values);
+            echo $ret;
+        }
+    }
+
+    private function check_token(){
         $token = $this->input->post('token');
         $code = $this->input->post('code');
         if($token && $code){
@@ -52,37 +74,14 @@ class Download extends CI_Controller {
                     $is_valid = true;
                 }
             }
-
-            if($is_valid){
-                $download_key = $this->Download_key_model->generate_key();
-                $return_values['error'] = false;
-                $return_values['download_key'] = $download_key;
-
-                $ret = json_encode($return_values);
-                echo $ret;
-            }
-            else{
-                $return_values['error'] = true;
-                $return_values['err_msg'] = 'Not a valid token.';
-
-                $ret = json_encode($return_values);
-                echo $ret;
-            }
-        }
-        else{
-            $return_values['error'] = true;
-            $return_values['err_msg'] = 'Token or key missing.';
-
-            $ret = json_encode($return_values);
-            echo $ret;
         }
     }
-
 
     private function fetch($download_key){
         $fetch_hash = $_GET['fetch_hash']?$_GET['fetch_hash']:'';
         
         $flag = $this->Download_key_model->is_valid($download_key);
+        $this->Download_key_model->dispose_key($download_key);
         if($flag){
             $file_query = $this->File_model->get_file($fetch_hash);
             if($result = $file_query->result()){
