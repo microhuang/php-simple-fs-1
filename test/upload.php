@@ -27,7 +27,8 @@ function decrypt($inputkey, $encrypted){
 
 
 /* -------------------------------------  */
-$file_path = "/var/www/OReilly.Programming.Python.3rd.Ed.7z";
+// $file_path = "/var/www/OReilly.Programming.Python.3rd.Ed.7z";
+$file_path = "/var/www/hello.txt";
 
 // $key = "pmt's my tool";
 // $token_orig = sha1("anp's no programmer");
@@ -42,9 +43,12 @@ $params = array(
     "file" => "@".$file_path.";type=".$file_type
 );
 
+
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL, "http://fs.dev.aleiphoenix.com/upload");
+// curl_setopt($ch, CURLOPT_URL, "http://fs.dev.aleiphoenix.com/upload");
+// curl_setopt($ch, CURLOPT_URL, "http://fs.chenlei.dev.anjuke.com/upload");
+curl_setopt($ch, CURLOPT_URL, "http://fs.pmt.corp.anjuke.com/upload");
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);

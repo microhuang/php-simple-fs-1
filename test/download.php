@@ -44,9 +44,10 @@ $params = array(
 
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL, "http://fs.dev.aleiphoenix.com/download");
-// curl_setopt($ch, CURLOPT_POST, 1);
-// curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+// curl_setopt($ch, CURLOPT_URL, "http://fs.dev.aleiphoenix.com/download");
+curl_setopt($ch, CURLOPT_URL, "http://fs.dev.chenlei.anjuke.com/donwload");
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
 $ret = curl_exec($ch);
@@ -55,6 +56,5 @@ if($ret){
 }
 
 $download_key = $ret_value->download_key;
-
 
 header("Location: http://fs.dev.aleiphoenix.com/download?download_key={$download_key}&fetch_hash={$params['fetch_hash']}");
