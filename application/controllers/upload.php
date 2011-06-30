@@ -55,7 +55,8 @@ class Upload extends CI_Controller {
                     $seperator = $this->config->item('dir_seperator');
                     $filename = date("H:i:s")."_".$file['name'];
                     $save_full_path = $root_path.$seperator.$save_path.$filename;
-                    $flag = DirTool::recur_mkdir($save_path);
+                    $flag = DirTool::recur_mkdir($root_path.$seperator.$save_path);
+                    $save_path .= $filename;
 
                     // $hash_sum = sha1_file($save_full_path);
                     $hash_sum = sha1_file($file['tmp_name']);
