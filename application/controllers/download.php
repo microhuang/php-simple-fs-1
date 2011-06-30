@@ -84,8 +84,10 @@ class Download extends CI_Controller {
         $this->Download_key_model->dispose_key($download_key);
         if($flag){
             $file_query = $this->File_model->get_file($fetch_hash);
+            $root_path = $this->config->item('file_path');
+            $seperator = $this->config->item('dir_seperator');
             if($result = $file_query->result()){
-                $file_path = $result[0]->full_path;
+                $file_path = $root_path.$seperator.$result[0]->full_path;
                 $file_type = $result[0]->mime_type;
                 $expire=180;
                 $filename = $result[0]->name; 
