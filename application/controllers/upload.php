@@ -51,10 +51,10 @@ class Upload extends CI_Controller {
                 $saved_url = array();
                 foreach($files as $file){
                     /* save the file */
-                    $save_path = $root_path.$seperator.date("Y").$seperator.date("m").$seperator.date("d").$seperator;
+                    $save_path = date("Y").$seperator.date("m").$seperator.date("d").$seperator;
                     $seperator = $this->config->item('dir_seperator');
                     $filename = date("H:i:s")."_".$file['name'];
-                    $save_full_path = $save_path.$filename;
+                    $save_full_path = $root_path.$seperator.$save_path.$filename;
                     $flag = DirTool::recur_mkdir($save_path);
 
                     // $hash_sum = sha1_file($save_full_path);
@@ -63,7 +63,7 @@ class Upload extends CI_Controller {
                     /* check if identical file exist */
                     $check_file = $this->File_model->get_file_by_file_hash($hash_sum);
                     if($check_file){
-                        $save_full_path = $check_file->full_path;
+                        $save_path = $check_file->full_path;
                     }
                     else{
                         $flag = move_uploaded_file($file['tmp_name'], $save_full_path);
@@ -76,7 +76,7 @@ class Upload extends CI_Controller {
                     $inputarr['size'] = $file['size'];
                     $inputarr['file_hash'] = $hash_sum;
                     $inputarr['fetch_hash'] = CryptTool::get_file_fetch_hash($filename);
-                    $inputarr['full_path'] = $save_full_path;
+                    $inputarr['full_path'] = $save_path;
 
                     $file_obj = $this->File_model->insert_file($inputarr);
 

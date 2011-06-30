@@ -96,8 +96,8 @@ class Download extends CI_Controller {
                 $file_info = array(
                     "name" => $result[0]->name,
                     "type" => $result[0]->mime_type,
-                    "size" => filesize($result[0]->full_path),
-                    "path" => $result[0]->full_path
+                    "size" => filesize($file_path),
+                    "path" => $file_path
                 );
 
                 /* send the file */
