@@ -8,7 +8,18 @@ class FileTool{
             header('Content-Description: File Transfer');
             header('Content-Type: '. $inputarr['type']); 
             // header('Content-Disposition: attachment; filename*="utf8\'\''.urlencode($inputarr['name']).'"');
-            header('Content-Disposition: attachment; filename="'.urlencode($inputarr['name']).'"');
+             
+            $user_agent = $_SERVER['HTTP_USER_AGENT'];
+            $filename = $inputarr['name'];
+            if (stripos($user_agent, 'MSIE')) {
+                $filename_header = "filename=" . iconv('utf8', 'gb18030', $filename);
+            } else if (stripos($user_agent, 'safari')) {
+                $filename_header = "filename={$filename}";
+            } else {
+                $filename_header = "filename*=UTF-8''".urlencode($filename);
+            }
+
+            header('Content-Disposition: attachment; '.$filename_header);
             header('Content-Transfer-Encoding: binary');
             header('Expires: 0');
             header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
